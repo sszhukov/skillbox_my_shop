@@ -34,7 +34,7 @@ export default [
   {
     id: 5,
     categoryId: 3,
-    colorIds: [1, 3],
+    colorIds: [3],
     title: 'Игровая консоль PlayStation 5',
     price: 44990,
     imagePuth: 'img/products/ps5.png',
@@ -66,7 +66,7 @@ export default [
   {
     id: 9,
     categoryId: 3,
-    colorIds: [1, 3],
+    colorIds: [3],
     title: 'Игровая консоль Xbox Series S',
     price: 26990,
     imagePuth: 'img/products/xbox_series_s.png',

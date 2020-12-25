@@ -1,7 +1,7 @@
 export default [
   {
     id: 1,
-    title: 'Белый',
+    title: 'Чёрный',
     code: '#000000',
   },
   {
@@ -11,7 +11,7 @@ export default [
   },
   {
     id: 3,
-    title: 'Чёрный',
+    title: 'Белый',
     code: '#FFFFFF',
   },
   {
