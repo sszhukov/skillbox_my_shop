@@ -1,17 +1,17 @@
 <template>
 <li class="catalog__item" >
-  <a class="catalog__pic" href="#">
+  <a class="catalog__pic">
     <img :src="product.imagePuth" alt="Название товара">
   </a>
 
   <h3 class="catalog__title">
-    <a href="#">
+    <a href="#" @click.prevent="gotoPage('product', {id: product.id})">
       {{ product.title }}
     </a>
   </h3>
 
   <span class="catalog__price">
-    {{ product.price.toLocaleString('ru') }} ₽
+    {{ product.price | numberFormat }} ₽
   </span>
 
   <!-- <ul class="colors colors--black">
@@ -41,9 +41,18 @@
 </template>
 
 <script>
+import gotoPage from '@/helpers/gotoPage';
+import numberFormat from '@/helpers/numberFormat';
+
 export default {
   props: {
     product: Object,
+  },
+  methods: {
+    gotoPage,
+  },
+  filters: {
+    numberFormat,
   },
 };
 </script>

@@ -125,8 +125,8 @@
 </template>
 
 <script>
-import categories from '../ProductData/categories';
-import colors from '../ProductData/colors';
+import categories from '@/productData/categories';
+import colors from '@/productData/colors';
 
 export default {
   props: {
