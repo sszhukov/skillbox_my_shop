@@ -25,7 +25,7 @@
         <div class="pics__wrapper">
           <img width="570" height="570" :src="product.imagePuth" :alt="product.title">
         </div>
-        <ul class="pics__list" v-if(product.additionalImages)>
+        <ul class="pics__list" v-if="product.additionalImages">
           <li class="pics__item">
             <a href="" class="pics__link pics__link--current">
               <img width="98" height="98" src="img/phone-square-1.jpg" srcset="img/phone-square-1@2x.jpg 2x" alt="Название товара">
