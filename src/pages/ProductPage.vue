@@ -57,67 +57,10 @@
         <div class="item__form">
           <form class="form" action="#" method="POST">
             <b class="item__price">
-              {{ product.price | numberFormat }} ₽
+              {{ showPriceSafe(product.price, '₽', 'Данный товар распродан') }}
             </b>
 
-            <fieldset class="form__block">
-              <legend class="form__legend">Цвет:</legend>
-              <ul class="colors">
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input class="colors__radio sr-only" type="radio" name="color-item" value="blue" checked="">
-                    <span class="colors__value" style="background-color: #73B6EA;">
-                    </span>
-                  </label>
-                </li>
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input class="colors__radio sr-only" type="radio" name="color-item" value="yellow">
-                    <span class="colors__value" style="background-color: #FFBE15;">
-                    </span>
-                  </label>
-                </li>
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input class="colors__radio sr-only" type="radio" name="color-item" value="gray">
-                    <span class="colors__value" style="background-color: #939393;">
-                  </span></label>
-                </li>
-              </ul>
-            </fieldset>
-
-            <fieldset class="form__block">
-              <legend class="form__legend">Объемб в ГБ:</legend>
-
-              <ul class="sizes sizes--primery">
-                <li class="sizes__item">
-                  <label class="sizes__label">
-                    <input class="sizes__radio sr-only" type="radio" name="sizes-item" value="32">
-                    <span class="sizes__value">
-                      32gb
-                    </span>
-                  </label>
-                </li>
-                <li class="sizes__item">
-                  <label class="sizes__label">
-                    <input class="sizes__radio sr-only" type="radio" name="sizes-item" value="64">
-                    <span class="sizes__value">
-                      64gb
-                    </span>
-                  </label>
-                </li>
-                <li class="sizes__item">
-                  <label class="sizes__label">
-                    <input class="sizes__radio sr-only" type="radio" name="sizes-item" value="128" checked="">
-                    <span class="sizes__value">
-                      128gb
-                    </span>
-                  </label>
-                </li>
-              </ul>
-            </fieldset>
-
-            <div class="item__row">
+            <div class="item__row" v-if="checkPrice(product.price)">
               <div class="form__counter">
                 <button type="button" aria-label="Убрать один товар">
                   <svg width="12" height="12" fill="currentColor">
@@ -207,17 +150,15 @@
 </template>
 
 <script>
-import numberFormat from '@/helpers/numberFormat';
 import gotoPage from '@/helpers/gotoPage';
+import checkPrice from '@/helpers/checkPrice';
+import showPriceSafe from '@/helpers/showPriceSafe';
 import products from '@/productData/products';
 import categories from '@/productData/categories';
 
 export default {
   props: {
     pageParams: {},
-  },
-  filters: {
-    numberFormat,
   },
   computed: {
     product() {
@@ -229,6 +170,8 @@ export default {
   },
   methods: {
     gotoPage,
+    showPriceSafe,
+    checkPrice,
   },
 };
 </script>

@@ -12,7 +12,7 @@ export default [
     categoryId: 2,
     colorIds: [1],
     title: 'Игровая консоль PlayStation 4',
-    price: 19990,
+    price: null,
     imagePuth: 'img/products/ps4.png',
   },
   {

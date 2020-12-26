@@ -11,7 +11,7 @@
   </h3>
 
   <span class="catalog__price">
-    {{ product.price | numberFormat }} ₽
+    {{ showPriceSafe(product.price, '₽', 'Нет в наличии') }}
   </span>
 
   <!-- <ul class="colors colors--black">
@@ -42,7 +42,7 @@
 
 <script>
 import gotoPage from '@/helpers/gotoPage';
-import numberFormat from '@/helpers/numberFormat';
+import showPriceSafe from '@/helpers/showPriceSafe';
 
 export default {
   props: {
@@ -50,9 +50,7 @@ export default {
   },
   methods: {
     gotoPage,
-  },
-  filters: {
-    numberFormat,
+    showPriceSafe,
   },
 };
 </script>

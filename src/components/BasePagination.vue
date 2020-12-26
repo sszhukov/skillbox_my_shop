@@ -52,17 +52,23 @@ export default {
     },
   },
   methods: {
+    validatePage(page) {
+      if (page < 1 || page > this.pages) {
+        return 1;
+      }
+      return page;
+    },
     paginate(page) {
-      this.$emit('paginate', page);
+      this.$emit('paginate', this.validatePage(page));
     },
     next() {
-      if (this.page !== this.pages) {
-        this.$emit('paginate', this.page += 1);
+      if (this.page >= this.pages) {
+        this.paginate(this.page + 1);
       }
     },
     previous() {
       if (this.page !== 1) {
-        this.$emit('paginate', this.page -= 1);
+        this.paginate(this.page - 1);
       }
     },
   },
