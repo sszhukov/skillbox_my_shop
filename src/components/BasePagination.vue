@@ -62,7 +62,7 @@ export default {
       this.$emit('paginate', this.validatePage(page));
     },
     next() {
-      if (this.page >= this.pages) {
+      if (this.page <= this.pages) {
         this.paginate(this.page + 1);
       }
     },

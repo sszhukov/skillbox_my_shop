@@ -17,7 +17,7 @@
     />
 
     <section class="catalog">
-      <ProductList :products="products"/>
+      <ProductList :products="products" :color-id="filterColorId"/>
       <BasePagination v-model="page" :per-page="productPerPege" :total="countProducts"/>
     </section>
   </div>
@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import checkPrice from '@/helpers/checkPrice';
 import products from '@/productData/products';
 import ProductList from '@/components/ProductList.vue';
 import BasePagination from '@/components/BasePagination.vue';
@@ -49,11 +48,6 @@ export default {
   computed: {
     filteredProducts() {
       let filteredProducts = products;
-
-      if (this.filterPriceFrom > 0 || this.filterPriceTo > 0) {
-        filteredProducts = filteredProducts
-          .filter((product) => checkPrice(product.price));
-      }
 
       if (this.filterPriceFrom > 0) {
         filteredProducts = filteredProducts
@@ -85,9 +79,6 @@ export default {
     countProducts() {
       return this.filteredProducts.length;
     },
-  },
-  methods: {
-    checkPrice,
   },
 };
 </script>

@@ -15,4 +15,8 @@ export default [
     id: 4,
     title: 'Посуда',
   },
+  {
+    id: 5,
+    title: 'Смартфоны',
+  },
 ];

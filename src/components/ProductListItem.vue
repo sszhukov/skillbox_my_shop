@@ -5,52 +5,45 @@
   </a>
 
   <h3 class="catalog__title">
-    <a href="#" @click.prevent="gotoPage('product', {id: product.id})">
+    <a href="#" @click.prevent="gotoPage('product', {id: product.id, colorId: currentColorId})">
       {{ product.title }}
     </a>
   </h3>
 
   <span class="catalog__price">
-    {{ showPriceSafe(product.price, '₽', 'Нет в наличии') }}
+    {{ product.price | numberFormat }} ₽
   </span>
 
-  <!-- <ul class="colors colors--black">
-    <li class="colors__item">
-      <label class="colors__label">
-        <input class="colors__radio sr-only" type="radio" value="#73B6EA" v-model="color">
-        <span class="colors__value" style="background-color: #73B6EA;">
-        </span>
-      </label>
-    </li>
-    <li class="colors__item">
-      <label class="colors__label">
-        <input class="colors__radio sr-only" type="radio" value="#8BE000" v-model="color">
-        <span class="colors__value" style="background-color: #8BE000;">
-        </span>
-      </label>
-    </li>
-    <li class="colors__item">
-      <label class="colors__label">
-        <input class="colors__radio sr-only" type="radio" value="#222" v-model="color">
-        <span class="colors__value" style="background-color: #222;">
-        </span>
-      </label>
-    </li>
-  </ul> -->
+  <ColorSelection v-if="product.modificationColorIds.length > 1"
+                  :colors="colors(product.modificationColorIds)"
+                  :color-id.sync="currentColorId"/>
+
 </li>
 </template>
 
 <script>
 import gotoPage from '@/helpers/gotoPage';
-import showPriceSafe from '@/helpers/showPriceSafe';
+import numberFormat from '@/helpers/numberFormat';
+import ColorSelection from '@/components/ColorSelection.vue';
+import colors from '@/productData/colors';
 
 export default {
+  components: { ColorSelection },
   props: {
     product: Object,
+    colorId: Number,
+  },
+  data() {
+    return {
+      currentColorId: this.colorId,
+    };
   },
   methods: {
     gotoPage,
-    showPriceSafe,
+    colors,
+  },
+  filters: {
+    numberFormat,
   },
 };
 </script>

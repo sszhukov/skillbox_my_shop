@@ -1,5 +1,5 @@
 <template>
-<main class="content container">
+  <main class="content container">
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
@@ -57,10 +57,13 @@
         <div class="item__form">
           <form class="form" action="#" method="POST">
             <b class="item__price">
-              {{ showPriceSafe(product.price, '₽', 'Данный товар распродан') }}
+              {{ product.price | numberFormat }} ₽
             </b>
 
-            <div class="item__row" v-if="checkPrice(product.price)">
+            <ColorSelection v-if="product.modificationColorIds.length > 1"
+                            :colors="colors(product.modificationColorIds)" :color-id="pageParams.colorId"/>
+
+            <div class="item__row">
               <div class="form__counter">
                 <button type="button" aria-label="Убрать один товар">
                   <svg width="12" height="12" fill="currentColor">
@@ -151,12 +154,14 @@
 
 <script>
 import gotoPage from '@/helpers/gotoPage';
-import checkPrice from '@/helpers/checkPrice';
-import showPriceSafe from '@/helpers/showPriceSafe';
+import numberFormat from '@/helpers/numberFormat';
 import products from '@/productData/products';
 import categories from '@/productData/categories';
+import colors from '@/productData/colors';
+import ColorSelection from '@/components/ColorSelection.vue';
 
 export default {
+  components: { ColorSelection },
   props: {
     pageParams: {},
   },
@@ -170,8 +175,10 @@ export default {
   },
   methods: {
     gotoPage,
-    showPriceSafe,
-    checkPrice,
+    colors,
+  },
+  filters: {
+    numberFormat,
   },
 };
 </script>

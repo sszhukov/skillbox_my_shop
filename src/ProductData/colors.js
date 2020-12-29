@@ -1,4 +1,4 @@
-export default [
+const colors = [
   {
     id: 1,
     title: 'Чёрный',
@@ -39,4 +39,16 @@ export default [
     title: 'Жёлтый',
     code: '#FFBE15',
   },
+  {
+    id: 9,
+    title: 'Красно-синий',
+    codes: ['#004A9C', '#F9301E'],
+  },
 ];
+
+export default function (colorIds) {
+  if (colorIds && colorIds.length > 0) {
+    return colors.filter((color) => colorIds.find((id) => id === color.id));
+  }
+  return colors;
+}
