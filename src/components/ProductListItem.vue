@@ -5,17 +5,17 @@
   </a>
 
   <h3 class="catalog__title">
-    <a href="#" @click.prevent="gotoPage('product', {id: product.id, colorId: currentColorId})">
+    <router-link href="#" :to="{ name: 'product', params:{ id: product.id, colorId: currentColorId } }">
       {{ product.title }}
-    </a>
+    </router-link>
   </h3>
 
   <span class="catalog__price">
     {{ product.price | numberFormat }} ₽
   </span>
 
-  <ColorSelection v-if="product.modificationColorIds.length > 1"
-                  :colors="colors(product.modificationColorIds)"
+  <ColorSelection v-if="product.colorIds.length > 1"
+                  :colors="colors(product.colorIds)"
                   :color-id.sync="currentColorId"/>
 
 </li>
@@ -33,10 +33,10 @@ export default {
     product: Object,
     colorId: Number,
   },
-  data() {
-    return {
-      currentColorId: this.colorId,
-    };
+  computed: {
+    currentColorId() {
+      return this.colorId || this.product.defaultColorId;
+    },
   },
   methods: {
     gotoPage,

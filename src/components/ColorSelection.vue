@@ -12,7 +12,7 @@
               :style="{ background: `linear-gradient(${gradientDigree}, ${color.codes.join(', ')})` }"></span>
       </label>
     </li>
-    <li class="colors__item" v-if="reset">
+    <li class="colors__item" v-if="inFilter">
       <label class="colors__label">
         <input class="colors__radio sr-only" type="radio"
                value="-1" v-model.number="currentColorId"
@@ -30,7 +30,7 @@ export default {
   props: {
     colorId: Number,
     colors: Array,
-    reset: Boolean,
+    inFilter: Boolean,
   },
   data() {
     return {
@@ -41,7 +41,10 @@ export default {
   computed: {
     currentColorId: {
       get() {
-        return this.colorId;
+        if (this.inFilter) {
+          return this.colorId || 0;
+        }
+        return this.colorId || this.colors[0].id;
       },
       set(value) {
         this.$emit('update:colorId', value);

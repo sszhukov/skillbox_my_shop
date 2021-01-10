@@ -3,14 +3,14 @@
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#" @click.prevent="gotoPage('main')">
+          <router-link class="breadcrumbs__link" href="#" :to="{name: 'main'}">
             Каталог
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#" @click.prevent="gotoPage('main')">
+          <router-link class="breadcrumbs__link" href="#" :to="{name: 'main'}">
             {{ category.title }}
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link">
@@ -60,8 +60,8 @@
               {{ product.price | numberFormat }} ₽
             </b>
 
-            <ColorSelection v-if="product.modificationColorIds.length > 1"
-                            :colors="colors(product.modificationColorIds)" :color-id="pageParams.colorId"/>
+            <ColorSelection v-if="product.colorIds.length > 1"
+                            :colors="colors(product.colorIds)" :color-id.sync="colorId"/>
 
             <div class="item__row">
               <div class="form__counter">
@@ -162,15 +162,25 @@ import ColorSelection from '@/components/ColorSelection.vue';
 
 export default {
   components: { ColorSelection },
-  props: {
-    pageParams: {},
+  data() {
+    return {
+      currentColorId: +this.$route.params.colorId,
+    };
   },
   computed: {
     product() {
-      return products.find((product) => product.id === this.pageParams.id);
+      return products.find((product) => product.id === +this.$route.params.id);
     },
     category() {
       return categories.find((category) => category.id === this.product.categoryId);
+    },
+    colorId: {
+      get() {
+        return this.currentColorId || this.product.defaultColorId;
+      },
+      set(val) {
+        this.currentColorId = val;
+      },
     },
   },
   methods: {

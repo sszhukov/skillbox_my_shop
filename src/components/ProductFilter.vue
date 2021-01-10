@@ -30,7 +30,7 @@
       </label>
     </fieldset>
 
-    <ColorSelection :colors.sync="colors" :color-id.sync="currentColorId" :reset="true"/>
+    <ColorSelection :colors.sync="colors" :color-id.sync="currentColorId" :inFilter="true"/>
 
     <!-- <fieldset class="form__block">
       <legend class="form__legend">Объемб в ГБ</legend>
