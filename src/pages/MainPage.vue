@@ -26,6 +26,7 @@
 
 <script>
 import products from '@/productData/products';
+import filters from '@/helpers/filters';
 import ProductList from '@/components/ProductList.vue';
 import BasePagination from '@/components/BasePagination.vue';
 import ProductFitter from '@/components/ProductFilter.vue';
@@ -49,25 +50,9 @@ export default {
     filteredProducts() {
       let filteredProducts = products;
 
-      if (this.filterPriceFrom > 0) {
-        filteredProducts = filteredProducts
-          .filter((product) => product.price > this.filterPriceFrom);
-      }
-
-      if (this.filterPriceTo > 0) {
-        filteredProducts = filteredProducts
-          .filter((product) => product.price < this.filterPriceTo);
-      }
-
-      if (this.filterCategoryId > 0) {
-        filteredProducts = filteredProducts
-          .filter((product) => product.categoryId === this.filterCategoryId);
-      }
-
-      if (this.filterColorId > 0) {
-        filteredProducts = filteredProducts
-          .filter((product) => product.colorIds.includes(this.filterColorId));
-      }
+      filteredProducts = filters.filterPrice(filteredProducts, this.filterPriceFrom, this.filterPriceTo);
+      filteredProducts = filters.filterCategories(filteredProducts, this.filterCategoryId);
+      filteredProducts = filters.filterColors(filteredProducts, this.filterColorId);
 
       return filteredProducts;
     },
