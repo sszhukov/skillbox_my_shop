@@ -55,7 +55,7 @@
           {{ product.title }}
         </h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST">
+          <form class="form" action="#" method="POST" @submit.prevent="addToCart">
             <b class="item__price">
               {{ product.price | numberFormat }} ₽
             </b>
@@ -64,23 +64,9 @@
                             :colors="colors(product.colorIds)" :color-id.sync="colorId"/>
 
             <div class="item__row">
-              <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар">
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-minus"></use>
-                  </svg>
-                </button>
+              <AmountInput :amount.sync="productAmount"/>
 
-                <input type="text" value="1" name="count">
-
-                <button type="button" aria-label="Добавить один товар">
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-plus"></use>
-                  </svg>
-                </button>
-              </div>
-
-              <button class="button button--primery" type="submit">
+              <button class="button button--primery">
                 В корзину
               </button>
             </div>
@@ -159,12 +145,14 @@ import products from '@/productData/products';
 import categories from '@/productData/categories';
 import colors from '@/productData/colors';
 import ColorSelection from '@/components/ColorSelection.vue';
+import AmountInput from '@/components/AmountInput.vue';
 
 export default {
-  components: { ColorSelection },
+  components: { ColorSelection, AmountInput },
   data() {
     return {
       currentColorId: +this.$route.params.colorId,
+      productAmount: 1,
     };
   },
   computed: {
@@ -186,6 +174,12 @@ export default {
   methods: {
     gotoPage,
     colors,
+    addToCart() {
+      this.$store.commit(
+        'addProductToCart',
+        { productId: this.product.id, amount: this.productAmount },
+      );
+    },
   },
   filters: {
     numberFormat,
