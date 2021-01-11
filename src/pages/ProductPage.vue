@@ -64,7 +64,7 @@
                             :colors="colors(product.colorIds)" :color-id.sync="colorId"/>
 
             <div class="item__row">
-              <AmountInput :amount.sync="productAmount"/>
+              <AmountSelection :amount.sync="productAmount"/>
 
               <button class="button button--primery">
                 В корзину
@@ -145,10 +145,10 @@ import products from '@/productData/products';
 import categories from '@/productData/categories';
 import colors from '@/productData/colors';
 import ColorSelection from '@/components/ColorSelection.vue';
-import AmountInput from '@/components/AmountInput.vue';
+import AmountSelection from '../components/AmountSelection.vue';
 
 export default {
-  components: { ColorSelection, AmountInput },
+  components: { ColorSelection, AmountSelection },
   data() {
     return {
       currentColorId: +this.$route.params.colorId,

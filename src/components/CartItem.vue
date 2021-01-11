@@ -13,7 +13,7 @@
       Артикул: {{ item.productId }}
     </span>
 
-    <AmountInput :amount.sync="amount"/>
+    <AmountSelection :amount.sync="amount"/>
 
     <b class="product__price">
       {{ item.product.price * item.amount | numberFormat }} ₽
@@ -32,13 +32,13 @@
 </template>
 
 <script>
-import AmountInput from '@/components/AmountInput.vue';
+import AmountSelection from '@/components/AmountSelection.vue';
 import numberFormat from '@/helpers/numberFormat';
 import { mapMutations } from 'vuex';
 
 export default {
   components: {
-    AmountInput,
+    AmountSelection,
   },
   props: {
     item: Object,

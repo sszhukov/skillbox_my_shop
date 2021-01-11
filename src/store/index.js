@@ -6,12 +6,17 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    // Cart
     cartProducts: [
       // example
       // { productId: 1, amount: 2 },
     ],
+
+    // ColorSelct
+    filterColor: 0,
   },
   mutations: {
+    // Cart
     addProductToCart(state, { productId, amount }) {
       const item = state.cartProducts.find((product) => product.productId === productId);
 
@@ -33,6 +38,11 @@ export default new Vuex.Store({
     },
     deleteCartProduct(state, productId) {
       state.cartProducts = state.cartProducts.filter((product) => product.productId !== productId);
+    },
+
+    // ColorSelect
+    updateFilteredColor(state, colorId) {
+      state.filteredColor = colorId;
     },
   },
   getters: {

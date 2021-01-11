@@ -31,11 +31,20 @@ export default {
   components: { ColorSelection },
   props: {
     product: Object,
-    colorId: Number,
+  },
+  data() {
+    return {
+      currentColor: this.$store.state.filterColor || this.product.defaultColorId,
+    };
   },
   computed: {
-    currentColorId() {
-      return this.colorId || this.product.defaultColorId;
+    currentColorId: {
+      get() {
+        return this.currentColor;
+      },
+      set(value) {
+        this.currentColor = value;
+      },
     },
   },
   methods: {

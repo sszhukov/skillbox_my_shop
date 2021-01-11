@@ -17,7 +17,7 @@
     />
 
     <section class="catalog">
-      <ProductList :products="products" :color-id="filterColorId"/>
+      <ProductList :products="products"/>
       <BasePagination v-model="page" :per-page="productPerPege" :total="countProducts"/>
     </section>
   </div>
@@ -39,7 +39,7 @@ export default {
       filterPriceFrom: 0,
       filterPriceTo: 0,
       filterCategoryId: 0,
-      filterColorId: 0,
+      filterColorId: this.$store.state.filterColor,
 
       // BasePagination
       page: 1,
