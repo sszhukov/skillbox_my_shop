@@ -1,5 +1,10 @@
 <template>
-  <main class="content container">
+  <main class="content container" v-if="productLoading">Товар загружается...</main>
+  <main class="content container" v-else-if="productLoadingError">
+    Произошла ошбка
+    <button class="button button--primery" @click="loadProducts">Попробовать ещё раз</button>
+  </main>
+  <main class="content container" v-else>
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
@@ -23,7 +28,7 @@
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" :src="product.imagePuth" :alt="product.title">
+          <img width="570" height="570" :src="product.image" :alt="product.title">
         </div>
         <ul class="pics__list" v-if="product.additionalImages">
           <li class="pics__item">
@@ -60,8 +65,7 @@
               {{ product.price | numberFormat }} ₽
             </b>
 
-            <ColorSelection v-if="product.colorIds.length > 1"
-                            :colors="colors(product.colorIds)" :color-id.sync="colorId"/>
+            <ColorSelection :colors="colors" :color-id.sync="colorId"/>
 
             <div class="item__row">
               <AmountSelection :amount.sync="productAmount"/>
@@ -139,13 +143,12 @@
 </template>
 
 <script>
+import axios from 'axios';
 import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
-import products from '@/productData/products';
-import categories from '@/productData/categories';
-import colors from '@/productData/colors';
 import ColorSelection from '@/components/ColorSelection.vue';
-import AmountSelection from '../components/AmountSelection.vue';
+import AmountSelection from '@/components/AmountSelection.vue';
+import { API_BASE_URL } from '@/config';
 
 export default {
   components: { ColorSelection, AmountSelection },
@@ -153,14 +156,23 @@ export default {
     return {
       currentColorId: +this.$route.params.colorId,
       productAmount: 1,
+
+      productData: null,
+      productCategories: null,
+      productColors: null,
+      productLoading: false,
+      productLoadingError: false,
     };
   },
   computed: {
     product() {
-      return products.find((product) => product.id === +this.$route.params.id);
+      return this.productData || {};
     },
     category() {
-      return categories.find((category) => category.id === this.product.categoryId);
+      return this.productCategories || {};
+    },
+    colors() {
+      return this.productColors || [];
     },
     colorId: {
       get() {
@@ -173,16 +185,37 @@ export default {
   },
   methods: {
     gotoPage,
-    colors,
     addToCart() {
       this.$store.commit(
         'addProductToCart',
         { productId: this.product.id, amount: this.productAmount },
       );
     },
+    loadProductData() {
+      this.productLoading = true;
+      axios.get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
+        .then((response) => {
+          this.productCategories = response.data.category;
+          this.productColors = response.data.colors;
+          this.productData = {
+            ...response.data,
+            image: response.data.image.file.url,
+          };
+        })
+        .catch(() => { this.productLoadingError = true; })
+        .then(() => { this.productLoading = false; });
+    },
   },
   filters: {
     numberFormat,
+  },
+  watch: {
+    '$route.params.id': {
+      handler() {
+        this.loadProductData();
+      },
+      immediate: true,
+    },
   },
 };
 </script>

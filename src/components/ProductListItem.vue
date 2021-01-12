@@ -14,9 +14,7 @@
     {{ product.price | numberFormat }} ₽
   </span>
 
-  <ColorSelection v-if="product.colors.length > 1"
-                  :colors="product.colors"
-                  :color-id.sync="currentColorId"/>
+  <ColorSelection :colors="product.colors" :color-id.sync="currentColorId"/>
 
 </li>
 </template>
