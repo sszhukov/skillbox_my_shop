@@ -7,10 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     // Cart
-    cartProducts: [
-      // example
-      // { productId: 1, amount: 2 },
-    ],
+    cartProducts: [],
 
     // ColorSelct
     filterColor: 0,
@@ -41,8 +38,8 @@ export default new Vuex.Store({
     },
 
     // ColorSelect
-    updateFilteredColor(state, colorId) {
-      state.filteredColor = colorId;
+    updateFilterColor(state, { colorId }) {
+      state.filterColor = colorId;
     },
   },
   getters: {

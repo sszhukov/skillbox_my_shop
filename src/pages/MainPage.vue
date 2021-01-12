@@ -72,7 +72,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['updateFilteredColor']),
+    ...mapMutations(['updateFilterColor']),
 
     loadProducts() {
       this.productsDataLoading = true;
@@ -99,7 +99,7 @@ export default {
       this.loadProducts();
     },
     filterColorId(val) {
-      this.updateFilteredColor(val);
+      this.updateFilterColor({ colorId: val });
       this.loadProducts();
     },
     filterPriceFrom() {
