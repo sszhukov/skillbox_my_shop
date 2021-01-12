@@ -17,6 +17,11 @@
     />
 
     <section class="catalog">
+      <div v-if="productsDataLoading">Загрузка товаров...</div>
+      <div v-else-if="productsDataError">
+        Произошла ошбка
+        <button class="button button--primery" @click="loadProducts">Попробовать ещё раз</button>
+      </div>
       <ProductList :products="products"/>
       <BasePagination v-model="page" :per-page="productPerPege" :total="countProducts"/>
     </section>
@@ -47,6 +52,8 @@ export default {
       productPerPege: 6,
 
       productsData: null,
+      productsDataLoading: false,
+      productsDataError: null,
     };
   },
   computed: {
@@ -76,17 +83,23 @@ export default {
   },
   methods: {
     loadProducts() {
-      axios.get(`${API_BASE_URL}/api/products`, {
-        params: {
-          page: this.page,
-          limit: this.productPerPege,
-          categoryId: this.filterCategoryId,
-          colorId: this.filterColorId,
-          minPrice: this.filterPriceFrom,
-          maxPrice: this.filterPriceTo,
-        },
-      })
-        .then((response) => { this.productsData = response.data; });
+      this.productsDataLoading = true;
+      clearTimeout(this.loadProdictsTimer);
+      this.loadProdictsTimer = setTimeout(() => {
+        axios.get(`${API_BASE_URL}/api/products`, {
+          params: {
+            page: this.page,
+            limit: this.productPerPege,
+            categoryId: this.filterCategoryId,
+            colorId: this.filterColorId,
+            minPrice: this.filterPriceFrom,
+            maxPrice: this.filterPriceTo,
+          },
+        })
+          .then((response) => { this.productsData = response.data; })
+          .catch((error) => { this.productsDataError = error; })
+          .then(() => { this.productsDataLoading = false; });
+      }, 0);
     },
   },
   watch: {
