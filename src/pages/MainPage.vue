@@ -25,7 +25,8 @@
 </template>
 
 <script>
-import products from '@/productData/products';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config';
 import filters from '@/helpers/filters';
 import ProductList from '@/components/ProductList.vue';
 import BasePagination from '@/components/BasePagination.vue';
@@ -43,12 +44,14 @@ export default {
 
       // BasePagination
       page: 1,
-      productPerPege: 3,
+      productPerPege: 6,
+
+      productsData: null,
     };
   },
   computed: {
     filteredProducts() {
-      let filteredProducts = products;
+      let filteredProducts = this.productsData;
 
       filteredProducts = filters.filterPrice(filteredProducts, this.filterPriceFrom, this.filterPriceTo);
       filteredProducts = filters.filterCategories(filteredProducts, this.filterCategoryId);
@@ -58,12 +61,41 @@ export default {
     },
 
     products() {
-      const offset = (this.page - 1) * this.productPerPege;
-      return this.filteredProducts.slice(offset, offset + this.productPerPege);
+      return this.productsData
+        ? this.productsData.items.map((product) => ({
+          ...product,
+          image: product.image.file.url,
+        }))
+        : [];
     },
     countProducts() {
-      return this.filteredProducts.length;
+      return this.productsData
+        ? this.productsData.pagination.total
+        : 0;
     },
+  },
+  methods: {
+    loadProducts() {
+      axios.get(`${API_BASE_URL}/api/products`, {
+        params: {
+          page: this.page,
+          limit: this.productPerPege,
+          categoryId: this.filterCategoryId,
+          colorId: this.filterColorId,
+          minPrice: this.filterPriceFrom,
+          maxPrice: this.filterPriceTo,
+        },
+      })
+        .then((response) => { this.productsData = response.data; });
+    },
+  },
+  watch: {
+    page() {
+      this.loadProducts();
+    },
+  },
+  created() {
+    this.loadProducts();
   },
 };
 </script>
