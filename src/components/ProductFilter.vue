@@ -20,7 +20,7 @@
       <label class="form__label form__label--select">
         <select class="form__select" type="text" name="category" v-model.number="currentCategoryId">
           <option value="0">Все категории</option>
-          <option v-for="category in categories"
+          <option v-for="category in categoriesData"
                   :value="category.id"
                   :key="category.id"
           >
@@ -30,7 +30,7 @@
       </label>
     </fieldset>
 
-    <ColorSelection :colors.sync="colors" :color-id.sync="currentColorId" :inFilter="true"/>
+    <ColorSelection v-if="colorsData" :colors="colorsData" :color-id.sync="currentColorId" :inFilter="true"/>
 
     <!-- <fieldset class="form__block">
       <legend class="form__legend">Объемб в ГБ</legend>
@@ -105,8 +105,8 @@
 </template>
 
 <script>
-import categories from '@/productData/categories';
-import colors from '@/productData/colors';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config';
 import ColorSelection from '@/components/ColorSelection.vue';
 
 export default {
@@ -123,29 +123,10 @@ export default {
       currentPriceTo: this.priceTo,
       currentCategoryId: this.categoryId,
       currentColorId: this.colorId,
+
+      categoriesData: null,
+      colorsData: null,
     };
-  },
-  watch: {
-    priceFrom(value) {
-      this.currentPriceFrom = value;
-    },
-    priceTo(value) {
-      this.currentPriceTo = value;
-    },
-    categoryId(value) {
-      this.currentCategoryId = value;
-    },
-    colorId(value) {
-      this.currentColorId = value;
-    },
-  },
-  computed: {
-    categories() {
-      return categories;
-    },
-    colors() {
-      return colors();
-    },
   },
   methods: {
     submit() {
@@ -160,6 +141,20 @@ export default {
       this.$emit('update:categoryId', 0);
       this.$emit('update:colorId', 0);
     },
+    loadCategories() {
+      axios.get(`${API_BASE_URL}/api/productCategories`)
+        .then((response) => { this.categoriesData = response.data.items; })
+        .catch();
+    },
+    loadColors() {
+      axios.get(`${API_BASE_URL}/api/colors`)
+        .then((response) => { this.colorsData = response.data.items; })
+        .catch();
+    },
+  },
+  created() {
+    this.loadCategories();
+    this.loadColors();
   },
 };
 </script>

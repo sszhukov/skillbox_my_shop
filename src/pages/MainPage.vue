@@ -31,11 +31,11 @@
 
 <script>
 import axios from 'axios';
-import { API_BASE_URL } from '@/config';
-import filters from '@/helpers/filters';
 import ProductList from '@/components/ProductList.vue';
 import BasePagination from '@/components/BasePagination.vue';
 import ProductFitter from '@/components/ProductFilter.vue';
+import { API_BASE_URL } from '@/config';
+import { mapMutations } from 'vuex';
 
 export default {
   components: { ProductList, BasePagination, ProductFitter },
@@ -57,16 +57,6 @@ export default {
     };
   },
   computed: {
-    filteredProducts() {
-      let filteredProducts = this.productsData;
-
-      filteredProducts = filters.filterPrice(filteredProducts, this.filterPriceFrom, this.filterPriceTo);
-      filteredProducts = filters.filterCategories(filteredProducts, this.filterCategoryId);
-      filteredProducts = filters.filterColors(filteredProducts, this.filterColorId);
-
-      return filteredProducts;
-    },
-
     products() {
       return this.productsData
         ? this.productsData.items.map((product) => ({
@@ -82,6 +72,8 @@ export default {
     },
   },
   methods: {
+    ...mapMutations(['updateFilteredColor']),
+
     loadProducts() {
       this.productsDataLoading = true;
       clearTimeout(this.loadProdictsTimer);
@@ -103,6 +95,19 @@ export default {
     },
   },
   watch: {
+    filterCategoryId() {
+      this.loadProducts();
+    },
+    filterColorId(val) {
+      this.updateFilteredColor(val);
+      this.loadProducts();
+    },
+    filterPriceFrom() {
+      this.loadProducts();
+    },
+    filterPriceTo() {
+      this.loadProducts();
+    },
     page() {
       this.loadProducts();
     },
