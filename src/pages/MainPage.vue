@@ -99,7 +99,7 @@ export default {
       this.loadProducts();
     },
     filterColorId(val) {
-      this.updateFilterColor({ colorId: val });
+      this.updateFilterColor(val);
       this.loadProducts();
     },
     filterPriceFrom() {

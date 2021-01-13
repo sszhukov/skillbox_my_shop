@@ -28,8 +28,8 @@ export default {
         return this.amount;
       },
       set(value) {
-        if (value >= 0) {
-          this.$emit('update:amount', value || 1);
+        if (value > 0) {
+          this.$emit('update:amount', value);
         }
       },
     },

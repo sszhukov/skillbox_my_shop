@@ -70,10 +70,17 @@
             <div class="item__row">
               <AmountSelection :amount.sync="productAmount"/>
 
-              <button class="button button--primery">
+              <router-link :to="{name: 'cart'}" v-if="productInCart(this.product.id)">
+                <button class="button button--primery">
+                  Уже в корзине
+                </button>
+              </router-link>
+              <button class="button button--primery" :disabled="addingProductToCart" v-else>
                 В корзину
               </button>
             </div>
+            <div v-if="addingProductToCart && !addingProductToCartError">Подождите... Идёт добавление товара в корзину.</div>
+            <div v-else-if="addingProductToCartError">Что-то пошло не так и товар не был добавлен в корзину. Попробуйте ещё раз</div>
           </form>
         </div>
       </div>
@@ -149,6 +156,7 @@ import numberFormat from '@/helpers/numberFormat';
 import ColorSelection from '@/components/ColorSelection.vue';
 import AmountSelection from '@/components/AmountSelection.vue';
 import { API_BASE_URL } from '@/config';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   components: { ColorSelection, AmountSelection },
@@ -160,8 +168,12 @@ export default {
       productData: null,
       productCategories: null,
       productColors: null,
+
       productLoading: false,
       productLoadingError: false,
+
+      addingProductToCart: false,
+      addingProductToCartError: false,
     };
   },
   computed: {
@@ -176,20 +188,30 @@ export default {
     },
     colorId: {
       get() {
-        return this.currentColorId || this.product.defaultColorId;
+        return this.currentColorId || null;
       },
       set(val) {
         this.currentColorId = val;
       },
     },
+    productInCart() {
+      return this.inCart(this.product.id);
+    },
   },
   methods: {
     gotoPage,
+    ...mapActions(['addProductToCart']),
+    ...mapGetters(['inCart']),
+
     addToCart() {
-      this.$store.commit(
-        'addProductToCart',
-        { productId: this.product.id, amount: this.productAmount },
-      );
+      this.addingProductToCart = true;
+      this.addProductToCart({ productId: this.product.id, amount: this.productAmount })
+        .catch((error) => {
+          this.addingProductToCartError = error;
+        })
+        .then(() => {
+          this.addingProductToCart = false;
+        });
     },
     loadProductData() {
       this.productLoading = true;
