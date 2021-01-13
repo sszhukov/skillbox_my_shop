@@ -22,7 +22,7 @@
     <button class="product__del button-del"
             type="button"
             aria-label="Удалить товар из корзины"
-            @click="deleteProduct(item.productId)"
+            @click="deleteCartProduct(item.productId)"
     >
       <svg width="20" height="20" fill="currentColor">
         <use xlink:href="#icon-close"></use>
@@ -34,7 +34,7 @@
 <script>
 import AmountSelection from '@/components/AmountSelection.vue';
 import numberFormat from '@/helpers/numberFormat';
-import { mapMutations, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 
 export default {
   components: {
@@ -57,8 +57,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations({ deleteProduct: 'deleteCartProduct' }),
-    ...mapActions(['updateCartProductAmount']),
+    ...mapActions(['updateCartProductAmount', 'deleteCartProduct']),
   },
 };
 </script>
