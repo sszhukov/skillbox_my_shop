@@ -1,9 +1,9 @@
 <template>
-  <main class="content container" v-if="productLoading">Товар загружается...</main>
-  <main class="content container" v-else-if="productLoadingError">
-    Произошла ошбка
-    <button class="button button--primery" @click="loadProducts">Попробовать ещё раз</button>
+  <main class="content container" v-if="productLoadingError">
+    <h1>Произошла ошибка</h1>
+    <button class="button button--restart" @click="loadProductData">Попробовать ещё раз</button>
   </main>
+  <main class="content container" v-else-if="!productData"></main>
   <main class="content container" v-else>
     <div class="content__top">
       <ul class="breadcrumbs">
@@ -75,12 +75,14 @@
                   Уже в корзине
                 </button>
               </router-link>
+              <button id="processing" class="button button--primery" v-else-if="addingProductToCart && !addingProductToCartError">
+                Добавление...
+              </button>
+              <div v-else-if="addingProductToCartError">Что-то пошло не так, и товар не был добавлен в корзину. Попробуйте ещё раз</div>
               <button class="button button--primery" :disabled="addingProductToCart" v-else>
                 В корзину
               </button>
             </div>
-            <div v-if="addingProductToCart && !addingProductToCartError">Подождите... Идёт добавление товара в корзину.</div>
-            <div v-else-if="addingProductToCartError">Что-то пошло не так и товар не был добавлен в корзину. Попробуйте ещё раз</div>
           </form>
         </div>
       </div>
@@ -156,7 +158,7 @@ import numberFormat from '@/helpers/numberFormat';
 import ColorSelection from '@/components/ColorSelection.vue';
 import AmountSelection from '@/components/AmountSelection.vue';
 import { API_BASE_URL } from '@/config';
-import { mapActions, mapGetters } from 'vuex';
+import { mapMutations, mapActions, mapGetters } from 'vuex';
 
 export default {
   components: { ColorSelection, AmountSelection },
@@ -169,7 +171,6 @@ export default {
       productCategories: null,
       productColors: null,
 
-      productLoading: false,
       productLoadingError: false,
 
       addingProductToCart: false,
@@ -200,23 +201,22 @@ export default {
   },
   methods: {
     gotoPage,
+    ...mapMutations(['openModalLoader', 'closeModalLoader']),
     ...mapActions(['addProductToCart']),
     ...mapGetters(['inCart']),
 
     addToCart() {
       this.addingProductToCart = true;
+      this.addingProductToCartError = false;
       this.addProductToCart({ productId: this.product.id, amount: this.productAmount })
-        .catch((error) => {
-          this.addingProductToCartError = error;
-        })
-        .then(() => {
-          this.addingProductToCart = false;
-        });
+        .catch(() => { this.addingProductToCartError = true; })
+        .then(() => { this.addingProductToCart = false; });
     },
     loadProductData() {
-      this.productLoading = true;
+      this.openModalLoader('Загрузка товара');
       axios.get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
         .then((response) => {
+          this.productLoadingError = false;
           this.productCategories = response.data.category;
           this.productColors = response.data.colors;
           this.productData = {
@@ -225,7 +225,7 @@ export default {
           };
         })
         .catch(() => { this.productLoadingError = true; })
-        .then(() => { this.productLoading = false; });
+        .then(() => { this.closeModalLoader(); });
     },
   },
   filters: {
@@ -241,3 +241,21 @@ export default {
   },
 };
 </script>
+
+<style>
+  #processing {
+    animation: processing 3s linear infinite;
+    border: 10px solid rgb(158, 255, 0);
+  }
+  @keyframes processing {
+    0% { border: 10px solid rgb(158, 255, 0); }
+    25% { border: 10px solid rgb(255, 0, 0); }
+    50% { border: 10px solid rgb(0, 0, 255); }
+    75% { border: 10px solid rgb(255, 0, 0); }
+    100% { border: 10px solid rgb(158, 255, 0); }
+  }
+
+  .button.button--restart {
+    background: rgb(158, 255, 0);
+  }
+</style>

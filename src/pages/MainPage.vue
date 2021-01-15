@@ -19,7 +19,7 @@
     <section class="catalog">
       <div v-if="productsDataLoading">Загрузка товаров...</div>
       <div v-else-if="productsDataError">
-        Произошла ошбка
+        <h1>Произошла ошибка</h1>
         <button class="button button--primery" @click="loadProducts">Попробовать ещё раз</button>
       </div>
       <ProductList :products="products"/>
@@ -72,12 +72,15 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['updateFilterColor']),
+    ...mapMutations(['updateFilterColor', 'openModalLoader', 'closeModalLoader']),
 
     loadProducts() {
-      this.productsDataLoading = true;
       clearTimeout(this.loadProdictsTimer);
+      this.productsDataError = false;
+      this.openModalLoader('Загрузка товаров');
       this.loadProdictsTimer = setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        this.openModalLoader('Загрузка товаров');
         axios.get(`${API_BASE_URL}/api/products`, {
           params: {
             page: this.page,
@@ -89,8 +92,8 @@ export default {
           },
         })
           .then((response) => { this.productsData = response.data; })
-          .catch((error) => { this.productsDataError = error; })
-          .then(() => { this.productsDataLoading = false; });
+          .catch(() => { this.productsDataError = true; })
+          .then(() => { this.closeModalLoader(); });
       }, 0);
     },
   },

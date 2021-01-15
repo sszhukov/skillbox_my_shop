@@ -13,6 +13,11 @@ export default new Vuex.Store({
     // ColorSelct
     filterColor: 0,
 
+    modalLoader: {
+      active: false,
+      message: '',
+    },
+
     // Cart from API
     userAccessKey: null,
     cartProductData: [],
@@ -33,6 +38,15 @@ export default new Vuex.Store({
     // ColorSelect
     updateFilterColor(state, colorId) {
       state.filterColor = colorId;
+    },
+
+    openModalLoader(state, message) {
+      state.modalLoader.active = true;
+      state.modalLoader.message = message;
+    },
+    closeModalLoader(state) {
+      state.modalLoader.active = false;
+      state.modalLoader.message = '';
     },
 
     // Cart from API
@@ -70,6 +84,9 @@ export default new Vuex.Store({
         return true;
       }
       return false;
+    },
+    getModalLoader(state) {
+      return state.modalLoader;
     },
   },
   actions: {
