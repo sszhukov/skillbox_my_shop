@@ -112,13 +112,10 @@
       </footer>
     </div>
 
-    <div class="modal" :class="modalLoager.active ? 'active' : ''" data-modal="1">
-        <div class="modal-message">{{modalLoager.message}}</div>
-        <Loader/>
-      </div>
-
-      <!-- Подложка под модальным окном -->
-      <div class="overlay" id="overlay-modal"></div>
+    <div class="modal" :class="modalLoager.active ? 'active' : ''">
+      <Loader/>
+      <div class="modal-message">{{modalLoager.message}}</div>
+    </div>
   </div>
 </template>
 
@@ -201,11 +198,7 @@ export default {
   animation-timing-function: linear;
 }
 @keyframes rotation {
-    0% {
-        transform:rotate(0deg);
-    }
-    100% {
-        transform:rotate(360deg);
-    }
+    0% { transform:rotate(0deg); }
+    100% { transform:rotate(360deg); }
 }
 </style>
