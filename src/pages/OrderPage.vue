@@ -54,8 +54,8 @@
                                placeholder="Введи ваш Email"/>
 
             <BaseFormFieldTextarea title="Комментарий к заказу"
-                                   v-model="formData.comments"
-                                   :error="formError.comments"
+                                   v-model="formData.comment"
+                                   :error="formError.comment"
                                    placeholder="Ваши пожелания"/>
           </div>
 
@@ -112,14 +112,14 @@
             <p>Итого: <b>{{cartProductCount}}</b> товара на сумму <b>{{totalPrice | numberFormat}} ₽</b></p>
           </div>
 
-          <button class="cart__button button button--primery" type="submit">
+          <button class="cart__button button button--primery" type="submit" @click="order">
             Оформить заказ
           </button>
         </div>
-        <div class="cart__error form__error-block" v-show="cartError">
+        <div class="cart__error form__error-block" v-if="formErrorMessage">
           <h4>Заявка не отправлена!</h4>
           <p>
-            Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.
+            {{ formErrorMessage }}
           </p>
         </div>
       </form>
@@ -131,7 +131,7 @@
 import BaseFormFieldText from '@/components/BaseFormFieldText.vue';
 import BaseFormFieldTextarea from '@/components/BaseFormFieldTextarea.vue';
 import numberFormat from '@/helpers/numberFormat';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 import OrderDetailItem from '@/components/OrderDetailItem.vue';
 
 export default {
@@ -141,7 +141,7 @@ export default {
     return {
       formData: {},
       formError: {},
-      cartError: null,
+      formErrorMessage: '',
     };
   },
   computed: {
@@ -149,6 +149,24 @@ export default {
 
     cartProductCount() {
       return this.$store.state.cartProducts.length;
+    },
+  },
+  methods: {
+    ...mapActions(['createOrder']),
+    ...mapMutations(['resetCart']),
+
+    order() {
+      this.formError = {};
+      this.formErrorMessage = '';
+
+      this.createOrder(this.formData)
+        .then(() => {
+          this.resetCart();
+        })
+        .catch((error) => {
+          this.formError = error.request || {};
+          this.formErrorMessage = error.message;
+        });
     },
   },
 };

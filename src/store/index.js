@@ -56,6 +56,10 @@ export default new Vuex.Store({
     updateCartProductData(state, items) {
       state.cartProductData = items;
     },
+    resetCart(state) {
+      state.cartProducts = [];
+      state.cartProductData = [];
+    },
     syncCartProducts(state) {
       state.cartProducts = state.cartProductData.map((item) => ({
         productId: item.product.id,
@@ -152,6 +156,14 @@ export default new Vuex.Store({
         .catch(() => {
           context.commit('syncCartProducts');
         });
+    },
+    createOrder(context, orderData) {
+      return axios.post(`${API_BASE_URL}/api/orders`, orderData, {
+        params: {
+          userAccessKey: context.state.userAccessKey,
+        },
+      })
+        .catch((error) => { throw error.response.data.error; });
     },
   },
 });
