@@ -90,6 +90,7 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    // fro App
     loadCart(context) {
       return axios.get(`${API_BASE_URL}/api/baskets`, {
         params: {
@@ -103,6 +104,47 @@ export default new Vuex.Store({
           }
           context.commit('updateCartProductData', response.data.items);
           context.commit('syncCartProducts');
+        });
+    },
+
+    // for MainPage
+    loadProducts(context, filters) {
+      context.commit('openModalLoader', 'Загрузка товаров');
+
+      return axios.get(`${API_BASE_URL}/api/products`, {
+        params: filters,
+      })
+        .then((response) => {
+          context.commit('closeModalLoader');
+          return response.data;
+        })
+        .catch((error) => {
+          context.commit('closeModalLoader');
+          throw error;
+        });
+    },
+
+    // for MainPage -> ProductFilter
+    loadFilterCategories() {
+      return axios.get(`${API_BASE_URL}/api/productCategories`)
+        .then((response) => response.data.items);
+    },
+    loadFilterColors() {
+      return axios.get(`${API_BASE_URL}/api/colors`)
+        .then((response) => response.data.items);
+    },
+
+    // for ProductPage
+    loadProduct(context, id) {
+      context.commit('openModalLoader', 'Загрузка товаров');
+      return axios.get(`${API_BASE_URL}/api/products/${id}`)
+        .then((response) => {
+          context.commit('closeModalLoader');
+          return response.data;
+        })
+        .catch((error) => {
+          context.commit('closeModalLoader');
+          throw error;
         });
     },
     addProductToCart(context, { productId, amount }) {
@@ -119,6 +161,8 @@ export default new Vuex.Store({
           context.commit('syncCartProducts');
         });
     },
+
+    // for CartPage -> CartItem
     updateCartProductAmount(context, { productId, amount }) {
       context.commit('updateCartProductAmount', { productId, amount });
 

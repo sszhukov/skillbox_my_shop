@@ -31,13 +31,13 @@ export default {
   },
   data() {
     return {
-      currentColor: this.$store.state.filterColor,
+      currentColor: this.currentColorId,
     };
   },
   computed: {
     currentColorId: {
       get() {
-        return this.currentColor;
+        return this.$store.state.filterColor || 0;
       },
       set(value) {
         this.currentColor = value;

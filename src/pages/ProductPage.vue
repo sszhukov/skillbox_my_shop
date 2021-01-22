@@ -152,13 +152,11 @@
 </template>
 
 <script>
-import axios from 'axios';
 import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
 import ColorSelection from '@/components/ColorSelection.vue';
 import AmountSelection from '@/components/AmountSelection.vue';
-import { API_BASE_URL } from '@/config';
-import { mapMutations, mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   components: { ColorSelection, AmountSelection },
@@ -201,8 +199,7 @@ export default {
   },
   methods: {
     gotoPage,
-    ...mapMutations(['openModalLoader', 'closeModalLoader']),
-    ...mapActions(['addProductToCart']),
+    ...mapActions(['addProductToCart', 'loadProduct']),
     ...mapGetters(['inCart']),
 
     addToCart() {
@@ -213,19 +210,17 @@ export default {
         .then(() => { this.addingProductToCart = false; });
     },
     loadProductData() {
-      this.openModalLoader('Загрузка товара');
-      axios.get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
-        .then((response) => {
+      this.loadProduct(this.$route.params.id)
+        .then((data) => {
           this.productLoadingError = false;
-          this.productCategories = response.data.category;
-          this.productColors = response.data.colors;
+          this.productCategories = data.category;
+          this.productColors = data.colors;
           this.productData = {
-            ...response.data,
-            image: response.data.image.file.url,
+            ...data,
+            image: data.image.file.url,
           };
         })
-        .catch(() => { this.productLoadingError = true; })
-        .then(() => { this.closeModalLoader(); });
+        .catch(() => { this.productLoadingError = true; });
     },
   },
   filters: {

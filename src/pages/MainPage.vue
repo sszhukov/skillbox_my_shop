@@ -1,59 +1,55 @@
 <template>
   <main class="content container">
-  <div class="content__top content__top--catalog">
-    <h1 class="content__title">
-      Каталог
-    </h1>
-    <span class="content__info">
-      {{ countProducts }}
-    </span>
-  </div>
+    <div class="content__top content__top--catalog">
+      <h1 class="content__title">
+        Каталог
+      </h1>
+      <span class="content__info">
+        {{ countProducts }}
+      </span>
+    </div>
 
-  <div class="content__catalog">
-    <ProductFitter :price-from.sync="filterPriceFrom"
-                   :price-to.sync="filterPriceTo"
-                   :category-id.sync="filterCategoryId"
-                   :color-id.sync="filterColorId"
-    />
+    <div class="content__catalog">
+      <ProductFitter v-bind.sync="filters"/>
 
-    <section class="catalog">
-      <div v-if="productsDataLoading">Загрузка товаров...</div>
-      <div v-else-if="productsDataError">
-        <h1>Произошла ошибка</h1>
-        <button class="button button--primery" @click="loadProducts">Попробовать ещё раз</button>
-      </div>
-      <ProductList :products="products"/>
-      <BasePagination v-model="page" :per-page="productPerPege" :total="countProducts"/>
-    </section>
-  </div>
-</main>
+      <section class="catalog">
+        <div v-if="productsDataError">
+          <h1>Произошла ошибка</h1>
+          <button class="button button--primery" @click="loadProducts">Попробовать ещё раз</button>
+        </div>
+        <ProductList v-if="products.length" :products="products"/>
+        <div v-else class="products-not-found">Товары не найдены</div>
+        <BasePagination v-model="page" :per-page="productPerPege" :total="countProducts"/>
+      </section>
+    </div>
+  </main>
 </template>
 
 <script>
-import axios from 'axios';
 import ProductList from '@/components/ProductList.vue';
 import BasePagination from '@/components/BasePagination.vue';
 import ProductFitter from '@/components/ProductFilter.vue';
-import { API_BASE_URL } from '@/config';
-import { mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 
 export default {
   components: { ProductList, BasePagination, ProductFitter },
   data() {
     return {
-      // ProductFitter
-      filterPriceFrom: 0,
-      filterPriceTo: 0,
-      filterCategoryId: 0,
-      filterColorId: this.$store.state.filterColor,
+      // ProductsFitter
+      filters: {
+        minPrice: 0,
+        maxPrice: 0,
+        categoryId: 0,
+        colorId: 0,
+      },
 
       // BasePagination
       page: 1,
       productPerPege: 6,
 
+      // ProducstData
       productsData: null,
-      productsDataLoading: false,
-      productsDataError: null,
+      productsDataError: '',
     };
   },
   computed: {
@@ -70,49 +66,44 @@ export default {
         ? this.productsData.pagination.total
         : 0;
     },
+    loadData() {
+      return {
+        page: this.page,
+        limit: this.productPerPege,
+        categoryId: this.filters.categoryId,
+        colorId: this.filters.colorId,
+        minPrice: this.filters.minPrice,
+        maxPrice: this.filters.maxPrice,
+      };
+    },
+    filterColorId() {
+      return this.$store.getters.getFilterColor;
+    },
   },
   methods: {
-    ...mapMutations(['updateFilterColor', 'openModalLoader', 'closeModalLoader']),
+    ...mapActions({ load: 'loadProducts' }),
 
     loadProducts() {
-      clearTimeout(this.loadProdictsTimer);
-      this.productsDataError = false;
-      this.openModalLoader('Загрузка товаров');
-      this.loadProdictsTimer = setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        this.openModalLoader('Загрузка товаров');
-        axios.get(`${API_BASE_URL}/api/products`, {
-          params: {
-            page: this.page,
-            limit: this.productPerPege,
-            categoryId: this.filterCategoryId,
-            colorId: this.filterColorId,
-            minPrice: this.filterPriceFrom,
-            maxPrice: this.filterPriceTo,
-          },
+      this.productsDataError = '';
+
+      this.load(this.loadData)
+        .then((response) => {
+          this.productsData = response;
         })
-          .then((response) => { this.productsData = response.data; })
-          .catch(() => { this.productsDataError = true; })
-          .then(() => { this.closeModalLoader(); });
-      }, 0);
+        .catch((error) => {
+          this.productsDataError = error;
+        });
     },
   },
   watch: {
-    filterCategoryId() {
-      this.loadProducts();
-    },
-    filterColorId(val) {
-      this.updateFilterColor(val);
-      this.loadProducts();
-    },
-    filterPriceFrom() {
-      this.loadProducts();
-    },
-    filterPriceTo() {
-      this.loadProducts();
-    },
     page() {
       this.loadProducts();
+    },
+    filters: {
+      handler() {
+        this.loadProducts();
+      },
+      deep: true,
     },
   },
   created() {
@@ -120,3 +111,10 @@ export default {
   },
 };
 </script>
+
+<style>
+  .products-not-found {
+    text-align: center;
+    font-family: "PressStart";
+  }
+</style>

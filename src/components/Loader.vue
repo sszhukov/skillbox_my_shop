@@ -1,26 +1,43 @@
 <template>
-  <div class="modal-loader">
-    <div class="modal-loader__box"></div>
-    <div class="modal-loader__box"></div>
-    <div class="modal-loader__box"></div>
-    <div class="modal-loader__box"></div>
-    <div class="modal-loader__box"></div>
-    <div class="modal-loader__box"></div>
-    <div class="modal-loader__box"></div>
-    <div class="modal-loader__box"></div>
-    <div class="modal-loader__box"></div>
+  <div>
+    <div class="modal-loader">
+      <div class="modal-loader__box"></div>
+      <div class="modal-loader__box"></div>
+      <div class="modal-loader__box"></div>
+      <div class="modal-loader__box"></div>
+      <div class="modal-loader__box"></div>
+      <div class="modal-loader__box"></div>
+      <div class="modal-loader__box"></div>
+      <div class="modal-loader__box"></div>
+      <div class="modal-loader__box"></div>
+    </div>
+    <div class="modal-message">{{message}}</div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    modalMessage: String,
+  },
+  data() {
+    return {
+      message: this.modalMessage || this.$store.state.modalLoader.message || 'Загрузка ...',
+    };
+  },
+};
 </script>
 
 <style>
   *, *:before, *:after {
     box-sizing: border-box;
   }
-
+  .modal-message {
+    font: 2em sans-serif;
+    position: absolute;
+    width: 100%;
+    top: 60%
+  }
   .modal-loader {
     position: absolute;
     left: 50%;

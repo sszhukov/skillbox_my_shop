@@ -111,11 +111,7 @@
         </div>
       </footer>
     </div>
-
-    <div class="modal" :class="modalLoager.active ? 'active' : ''">
-      <Loader/>
-      <div class="modal-message">{{modalLoager.message}}</div>
-    </div>
+    <Loader class="modal" :class="{active: modalLoager.active}"/>
   </div>
 </template>
 
@@ -161,7 +157,6 @@ export default {
   transition: 0.3s all;
 }
 .modal {
-  opacity: 0;
   visibility: hidden;
   height: 450px;
   width: 450px;
@@ -173,17 +168,9 @@ export default {
   text-align: center;
   border-radius: 100px;
   background-color: #fff;
-  opacity: 0.5;
   transition: 0.3s all;
 }
-.modal-message {
-  font: 2em sans-serif;
-  position: absolute;
-  width: 100%;
-  top: 60%
-}
 .modal.active {
-   opacity: 1;
    visibility: visible;
 }
 .overlay.active {
