@@ -109,10 +109,10 @@
 
           <div class="cart__total">
             <p>Доставка: <b>500 ₽</b></p>
-            <p>Итого: <b>{{cartProductCount}}</b> товара на сумму <b>{{totalPrice | numberFormat}} ₽</b></p>
+            <p>Итого: <b>{{cartProductCount}}</b> товара на сумму <b>{{totalPrice + 500 | numberFormat}} ₽</b></p>
           </div>
 
-          <button class="cart__button button button--primery" type="submit" @click="order">
+          <button v-show="cartProductCount" class="cart__button button button--primery" @click.prevent="order">
             Оформить заказ
           </button>
         </div>
@@ -153,15 +153,18 @@ export default {
   },
   methods: {
     ...mapActions(['createOrder']),
-    ...mapMutations(['resetCart']),
+    ...mapMutations(['resetCart', 'openModalLoader', 'closeModalLoader']),
 
     order() {
       this.formError = {};
       this.formErrorMessage = '';
+      this.openModalLoader('Отправляем данные...');
 
       this.createOrder(this.formData)
-        .then(() => {
+        .then((orderId) => {
           this.resetCart();
+          this.closeModalLoader();
+          this.$router.push({ name: 'orderInfo', params: { id: orderId } });
         })
         .catch((error) => {
           this.formError = error.request || {};
