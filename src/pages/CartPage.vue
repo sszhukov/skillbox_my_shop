@@ -38,9 +38,9 @@
             Итого: <span>{{ totalPrice | numberFormat }} ₽</span>
           </p>
 
-          <button class="cart__button button button--primery" type="submit">
+          <router-link class="cart__button button button--primery" tag="button" :to="{name: 'order'}">
             Оформить заказ
-          </button>
+          </router-link>
         </div>
       </form>
     </section>
@@ -54,9 +54,7 @@ import CartItem from '../components/CartItem.vue';
 
 export default {
   components: { CartItem },
-  filters: {
-    numberFormat,
-  },
+  filters: { numberFormat },
   computed: {
     ...mapGetters({ products: 'cartDetailProducts', totalPrice: 'cartTotalPrice' }),
   },
